@@ -58,3 +58,5 @@ A web-based Student Management System built with Python (Flask) and SQLite, runn
 ## Default Teacher Creds
 - **Email**: teacher@example.com
 - **Password**: teacher123
+
+"Note: This demo runs on a free cloud tier. Data may be reset periodically."
