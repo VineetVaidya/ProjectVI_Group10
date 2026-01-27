@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Student Management System</h1>
+    </header>
+
+    <!-- Auth Section -->
+    <div id="authSection">
+      <div id="loginForm">
+        <h2>Login</h2>
+        <form onsubmit="login(event)">
+          <select id="loginRole">
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+          <input type="email" id="loginEmail" placeholder="Email" required>
+          <input type="password" id="loginPassword" placeholder="Password" required>
+          <button type="submit">Login</button>
+        </form>
+        <p>No account? <a href="#" onclick="toggleAuthMode()">Register</a></p>
+        <div class="demo-info">
+          <p><strong>Demo Teacher:</strong> teacher@example.com / teacher123</p>
+        </div>
+      </div>
+
+      <div id="registerForm" class="hidden">
+        <h2>Register (Student)</h2>
+        <form onsubmit="register(event)">
+          <input type="text" id="regName" placeholder="Full Name" required>
+          <input type="email" id="regEmail" placeholder="Email" required>
+          <input type="password" id="regPassword" placeholder="Password" required>
+          <button type="submit">Register</button>
+        </form>
+        <p>Back to <a href="#" onclick="toggleAuthMode()">Login</a></p>
+      </div>
+    </div>
+
+    <!-- Student Dashboard -->
+    <div id="studentSection" class="hidden">
+      <div class="header-row">
+        <h2>Student Dashboard</h2>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+      </div>
+
+      <div class="card">
+        <h3>Submit Assignment</h3>
+        <select id="assignmentSelect">
+          <option value="">Loading assignments...</option>
+        </select>
+        <textarea id="submissionText" placeholder="Write your submission here..."></textarea>
+        <button onclick="submitAssignment()">Submit</button>
+      </div>
+
+      <div class="card">
+        <h3>My Grades</h3>
+        <ul id="gradeList">
+          <li>Loading...</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Teacher Dashboard -->
+    <div id="teacherSection" class="hidden">
+      <div class="header-row">
+        <h2>Teacher Dashboard</h2>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+      </div>
+
+      <div class="card">
+        <h3>Create Assignment</h3>
+        <input type="text" id="newAssignmentTitle" placeholder="Assignment Title">
+        <input type="text" id="newAssignmentDesc" placeholder="Description (optional)">
+        <button onclick="createAssignment()">Create</button>
+      </div>
+
+      <div class="card">
+        <h3>Manage Assignments</h3>
+        <div id="assignmentsList">
+          <!-- Javascript populates this -->
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Grade Submissions</h3>
+        <div id="submissionsDiff">
+          <!-- Javascript populates this -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
