@@ -326,6 +326,10 @@ def grade_submission(sub_id: int):
     return jsonify({"status": "graded"})
 
 
+
+# Initialize DB on module import so Gunicorn triggers it
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+
