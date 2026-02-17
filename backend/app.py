@@ -7,10 +7,17 @@ from pathlib import Path
 from typing import Any
 
 from flask import Flask, jsonify, make_response, request, send_from_directory, session
+import os
+from werkzeug.utils import secure_filename
 
 # Point static_folder to ../frontend since we moved files there
 app = Flask(__name__, static_folder="../frontend", static_url_path="")
 app.secret_key = "dev-secret-key-change-me"  # for class project only
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'zip'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 DB_PATH = Path("database/school.db")
 DB_PATH.parent.mkdir(exist_ok=True)
@@ -18,6 +25,10 @@ DB_PATH.parent.mkdir(exist_ok=True)
 
 def now_iso() -> str:
     return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def db() -> sqlite3.Connection:
@@ -57,11 +68,20 @@ def init_db() -> None:
           grade TEXT,
           feedback TEXT,
           graded_at TEXT,
+          file_path TEXT,
           FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
           FOREIGN KEY (student_id) REFERENCES users(id)
         );
         """
     )
+
+    
+    # Migration: Check if file_path column exists
+    cur = conn.execute("PRAGMA table_info(submissions)")
+    columns = [row[1] for row in cur.fetchall()]
+    if 'file_path' not in columns:
+        conn.execute("ALTER TABLE submissions ADD COLUMN file_path TEXT")
+    
     conn.commit()
 
     # Seed 1 teacher account (so you can login immediately)
@@ -89,6 +109,8 @@ def handle_perm(e: PermissionError):
 
 
 @app.route("/")
+@app.route("/student")
+@app.route("/teacher")
 def home():
     # Force NO CACHE so you always see latest HTML/JS
     resp = make_response(send_from_directory("../frontend", "index.html"))
@@ -246,22 +268,44 @@ def submit_assignment():
     if role != "student":
         raise PermissionError("Student only")
 
-    data: dict[str, Any] = request.get_json(force=True)
-    assignment_id = int(data.get("assignment_id") or 0)
-    content = (data.get("content") or "").strip()
-    if assignment_id <= 0 or not content:
-        return jsonify({"error": "assignment_id and content required"}), 400
+    # Handle form data and files
+    assignment_id = int(request.form.get("assignment_id") or 0)
+    content = (request.form.get("content") or "").strip()
+    
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+        
+    if not allowed_file(file.filename):
+        return jsonify({"error": "Only .zip files are allowed"}), 400
 
-    conn = db()
-    conn.execute(
-        """
-        INSERT INTO submissions(assignment_id, student_id, content, submitted_at)
-        VALUES(?,?,?,?)
-        """,
-        (assignment_id, user_id, content, now_iso()),
-    )
-    conn.commit()
-    return jsonify({"status": "submitted"}), 201
+    if assignment_id <= 0:
+        return jsonify({"error": "assignment_id required"}), 400
+
+    if file:
+        filename = secure_filename(file.filename)
+        # Unique filename to avoid overwrites: timestamp_userid_filename
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        unique_filename = f"{timestamp}_{user_id}_{filename}"
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        file.save(file_path)
+        
+        conn = db()
+        conn.execute(
+            """
+            INSERT INTO submissions(assignment_id, student_id, content, submitted_at, file_path)
+            VALUES(?,?,?,?,?)
+            """,
+            (assignment_id, user_id, content, now_iso(), unique_filename),
+        )
+        conn.commit()
+        return jsonify({"status": "submitted"}), 201
+
+    return jsonify({"error": "Upload failed"}), 500
 
 
 @app.get("/api/submissions")
@@ -274,7 +318,7 @@ def list_submissions():
             """
             SELECT s.id, s.assignment_id, a.title,
                    s.content, s.submitted_at,
-                   s.grade, s.feedback, s.graded_at
+                   s.grade, s.feedback, s.graded_at, s.file_path
             FROM submissions s
             JOIN assignments a ON a.id = s.assignment_id
             WHERE s.student_id = ?
@@ -290,7 +334,7 @@ def list_submissions():
         SELECT s.id, s.assignment_id, a.title,
                u.name AS student_name, u.email AS student_email,
                s.content, s.submitted_at,
-               s.grade, s.feedback, s.graded_at
+               s.grade, s.feedback, s.graded_at, s.file_path
         FROM submissions s
         JOIN assignments a ON a.id = s.assignment_id
         JOIN users u ON u.id = s.student_id
@@ -298,6 +342,10 @@ def list_submissions():
         """
     ).fetchall()
     return jsonify([dict(r) for r in rows])
+
+@app.route('/uploads/<name>')
+def download_file(name):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], name)
 
 
 @app.patch("/api/submissions/<int:sub_id>")

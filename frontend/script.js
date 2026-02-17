@@ -20,8 +20,26 @@ const assignmentsList = document.getElementById('assignmentsList');
 
 // Initial Load
 document.addEventListener('DOMContentLoaded', () => {
+    configureLoginByPath();
     checkSession();
 });
+
+function configureLoginByPath() {
+    const path = window.location.pathname;
+    const roleSelect = document.getElementById('loginRole');
+    const loginTitle = document.querySelector('#loginForm h2');
+
+    if (path === '/student') {
+        roleSelect.value = 'student';
+        roleSelect.parentElement.classList.add('hidden-role'); // Add CSS class to hide if needed or just hide element
+        roleSelect.style.display = 'none';
+        loginTitle.textContent = 'Student Login';
+    } else if (path === '/teacher') {
+        roleSelect.value = 'teacher';
+        roleSelect.style.display = 'none';
+        loginTitle.textContent = 'Teacher Login';
+    }
+}
 
 async function checkSession() {
     try {
@@ -145,7 +163,8 @@ async function loadSubmissionsForStudent() {
         const li = document.createElement('li');
         li.innerHTML = `
             <strong>${s.title}</strong><br>
-            Content: ${s.content}<br>
+            File: <a href="/uploads/${s.file_path}" target="_blank">Download Submission</a><br>
+            Comments: ${s.content}<br>
             Grade: ${s.grade || 'Pending'} <br>
             Feedback: ${s.feedback || 'None'}
             <hr>
@@ -157,15 +176,22 @@ async function loadSubmissionsForStudent() {
 async function submitAssignment() {
     const assignment_id = assignmentSelect.value;
     const content = submissionText.value;
+    const fileInput = document.getElementById('submissionFile');
+    const file = fileInput.files[0];
 
-    if (!assignment_id || !content) {
-        alert('Please select assignment and enter content');
+    if (!assignment_id || !file) {
+        alert('Please select assignment and upload a .zip file');
         return;
     }
 
+    const formData = new FormData();
+    formData.append('assignment_id', assignment_id);
+    formData.append('content', content);
+    formData.append('file', file);
+
     const res = await fetch(`${API_BASE}/submissions`, {
         method: 'POST',
-        body: JSON.stringify({ assignment_id, content })
+        body: formData
     });
 
     if (res.ok) {
@@ -253,7 +279,10 @@ async function loadSubmissionsForTeacher() {
         div.innerHTML = `
             <h4>${s.title} - ${s.student_name} (${s.student_email})</h4>
             <p>Submitted: ${new Date(s.submitted_at).toLocaleString()}</p>
-            <div class="content-box">${s.content}</div>
+            <div class="content-box">
+                <a href="/uploads/${s.file_path}" target="_blank">Download Submission</a><br>
+                Comments: ${s.content}
+            </div>
             <div class="grade-box">
                 <input type="text" placeholder="Grade" value="${s.grade || ''}" id="grade-${s.id}">
                 <input type="text" placeholder="Feedback" value="${s.feedback || ''}" id="feedback-${s.id}">
