@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dLearnestoga</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- ============ AUTH SECTION ============ -->
+  <div id="authSection">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-logo">d</div>
+          <h1>dLearnestoga</h1>
+          <p>Sign in to your account</p>
+        </div>
+
+        <div id="loginForm">
+          <h2>Login</h2>
+          <form onsubmit="login(event)">
+            <select id="loginRole">
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+            </select>
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button type="submit">Sign In</button>
+          </form>
+          <p>No account? <a href="#" onclick="toggleAuthMode()">Register</a></p>
+          <div class="demo-info">
+            <p><strong>Demo Teacher:</strong> teacher@example.com / teacher123</p>
+          </div>
+        </div>
+
+        <div id="registerForm" class="hidden">
+          <h2>Register (Student)</h2>
+          <form onsubmit="register(event)">
+            <input type="text" id="regName" placeholder="Full Name" required>
+            <input type="email" id="regEmail" placeholder="Email" required>
+            <input type="password" id="regPassword" placeholder="Password" required>
+            <button type="submit">Register</button>
+          </form>
+          <p>Back to <a href="#" onclick="toggleAuthMode()">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HOME PAGE ============ -->
+  <div id="homePage" class="hidden">
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+      <div class="navbar-left">
+        <a href="#" class="nav-icon-link" onclick="showHomePage()" title="Home">
+          <i class="bi bi-house-door-fill"></i>
+        </a>
+        <span class="nav-dots">&#8942;</span>
+        <span class="navbar-brand">
+          <span class="brand-e">d</span> Learnestoga
+        </span>
+      </div>
+      <div class="navbar-right">
+        <span class="nav-icon-btn" title="Courses" onclick="toggleCourseDropdown(event)"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+        <span class="nav-dots">&#8942;</span>
+        <span class="nav-icon-btn" title="Messages"><i class="bi bi-envelope"></i></span>
+        <span class="nav-icon-btn" title="Discussions"><i class="bi bi-chat-left-text"></i></span>
+        <span class="nav-icon-btn" title="Notifications"><i class="bi bi-bell"></i></span>
+        <span class="nav-dots">&#8942;</span>
+        <div class="nav-user-area">
+          <div class="nav-avatar" id="profileAvatar"></div>
+          <span class="nav-user-name" id="navUserName"></span>
+        </div>
+        <span class="nav-icon-btn" onclick="logout()" title="Log Out"><i class="bi bi-gear"></i></span>
+      </div>
+    </nav>
+    <div class="accent-band"></div>
+    <nav class="sub-navbar">
+      <div class="sub-navbar-inner">
+        <a href="#">ePortfolio</a>
+        <a href="#">Student Support</a>
+        <a href="#">Contact Support</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="page-content">
+      <h1 class="page-title">dLearnestoga Home</h1>
+
+      <div class="home-widgets-row">
+        <div class="widget widget-large">
+          <h2 class="widget-heading">Announcements</h2>
+          <div class="widget-body">
+            <p class="text-muted">No new announcements at this time.</p>
+          </div>
+        </div>
+        <div class="widget widget-small">
+          <h2 class="widget-heading">dLearnestoga Support</h2>
+          <div class="widget-body">
+            <div class="support-icons-row">
+              <div class="support-circle"><i class="bi bi-telephone-fill"></i></div>
+              <div class="support-circle"><i class="bi bi-envelope-fill"></i></div>
+              <div class="support-circle"><i class="bi bi-chat-fill"></i></div>
+            </div>
+            <p class="support-label">Phone</p>
+            <p class="support-value">1-877-325-7778</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="courses-section">
+        <h2 class="section-title">My Courses</h2>
+        <div class="course-tabs">
+          <span class="tab active">Current Courses</span>
+          <span class="tab">Past Courses</span>
+        </div>
+        <div class="course-grid" id="courseGrid">
+          <!-- Course cards populated by JS -->
+        </div>
+        </div>
+      </main>
+  </div>
+
+  <!-- ============ STUDENT DASHBOARD ============ -->
+  <div id="studentSection" class="hidden">
+    <nav class="top-navbar">
+      <div class="navbar-left">
+        <a href="#" class="nav-icon-link" onclick="showHomePage()" title="Home">
+          <i class="bi bi-house-door-fill"></i>
+        </a>
+        <span class="nav-dots">&#8942;</span>
+        <span class="navbar-brand">
+          <span class="brand-e">d</span> Learnestoga
+        </span>
+        <span class="nav-dots">&#8942;</span>
+        <span class="navbar-course-label" id="dashboardCourseTitle">Course Dashboard</span>
+      </div>
+      <div class="navbar-right">
+        <span class="nav-icon-btn" title="Courses" onclick="toggleCourseDropdown(event)"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+        <span class="nav-dots">&#8942;</span>
+        <span class="nav-icon-btn" title="Messages"><i class="bi bi-envelope"></i></span>
+        <span class="nav-icon-btn" title="Discussions"><i class="bi bi-chat-left-text"></i></span>
+        <span class="nav-icon-btn" title="Notifications"><i class="bi bi-bell"></i></span>
+        <span class="nav-dots">&#8942;</span>
+        <div class="nav-user-area">
+          <div class="nav-avatar"></div>
+          <span class="nav-user-name" id="navUserName2"></span>
+        </div>
+        <span class="nav-icon-btn" onclick="logout()" title="Log Out"><i class="bi bi-gear"></i></span>
+      </div>
+    </nav>
+    <div class="accent-band"></div>
+    <nav class="sub-navbar">
+      <div class="sub-navbar-inner">
+        <a href="#" onclick="showStudentView('dashboard'); return false;">Content</a>
+        <div class="ct-dropdown-wrapper">
+          <a href="#" class="ct-dropdown-toggle" onclick="toggleCourseTools(event); return false;">Course Tools <i class="bi bi-chevron-down" style="font-size:11px;"></i></a>
+          <div class="ct-dropdown-menu hidden" id="studentCourseToolsMenu">
+            <a href="#" onclick="showStudentView('assignments'); closeCourseTools(); return false;">Assignments</a>
+            <a href="#">Attendance</a>
+            <a href="#">Calendar</a>
+            <a href="#">Checklist</a>
+            <a href="#" onclick="showStudentView('classlist'); closeCourseTools(); return false;">Classlist</a>
+            <a href="#">Class Progress</a>
+            <a href="#">Discussions</a>
+            <a href="#">Grades</a>
+            <a href="#">Quizzes</a>
+          </div>
+        </div>
+        <a href="#">Student Support</a>
+        <a href="#">Contact Support</a>
+      </div>
+    </nav>
+
+    <div class="course-layout">
+      <!-- Sidebar - Teal Theme -->
+      <aside class="course-sidebar teal-sidebar">
+        <div class="sidebar-profile-area">
+          <div class="sidebar-avatar sidebar-avatar-img" id="profileAvatar2"></div>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="#" class="sidebar-link" onclick="showHomePage()">
+            <i class="bi bi-house-door sidebar-icon"></i> Home
+          </a>
+          <a href="#" class="sidebar-link active" onclick="showStudentView('dashboard'); return false;">
+            <i class="bi bi-bar-chart sidebar-icon"></i> Dashboard
+          </a>
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-calendar3 sidebar-icon"></i> Schedule
+          </a>
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-question-circle sidebar-icon"></i> Help
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="course-main">
+
+        <!-- ===== VIEW: Dashboard (default) ===== -->
+        <div id="studentViewDashboard">
+          <!-- Course Header -->
+          <div class="course-hero">
+            <h1 class="course-title" id="dashboardCourseName">Course Name</h1>
+            <p class="course-meta" id="dashboardCourseMeta">Course Details</p>
+          </div>
+          <div id="dashboardBannerImg" class="hidden"></div>
+
+          <!-- Course Shortcut Icons -->
+          <div class="course-shortcuts-bar">
+            <div class="shortcut-item">
+              <div class="shortcut-icon"><i class="bi bi-file-earmark-text"></i></div>
+              <span>Course Outline</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon"><i class="bi bi-journal-bookmark"></i></div>
+              <span>Instructional Plan</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon"><i class="bi bi-book"></i></div>
+              <span>Textbook</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon"><i class="bi bi-people"></i></div>
+              <span>MS Teams</span>
+          </div>
+        </div>
+
+          <!-- Dashboard Two-Column -->
+        <div class="dashboard-content">
+          <div class="dashboard-left">
+              <h3 class="dash-section-title">Announcements</h3>
+              <div class="announcement-card">
+                <div class="announcement-icon-circle"><i class="bi bi-megaphone-fill"></i></div>
+                <div class="announcement-body">
+                  <h4 class="announcement-title">Assignment #1 - Submission clarity</h4>
+                  <p class="announcement-date">Wednesday, February 4, 2026, 7:32 AM</p>
+                  <p class="announcement-text">Just for clarification, I am expecting the following files submitted to the Assignment1 submission link on dLearnestoga.</p>
+                </div>
+            </div>
+
+              <div class="widget-card" style="margin-top:24px;">
+                <h3 class="widget-card-heading">My Grades</h3>
+                <div class="widget-card-body">
+              <ul id="gradeList">
+                <li>Loading...</li>
+              </ul>
+                </div>
+            </div>
+          </div>
+
+          <div class="dashboard-right">
+              <h3 class="dash-section-title">Work To Do <i class="bi bi-info-circle" style="font-weight:400;font-size:14px;color:#6e7477;"></i></h3>
+              <div id="workToDo">
+                <p>Loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== VIEW: Assignments List ===== -->
+        <div id="studentViewAssignments" class="hidden">
+          <div class="assignments-page">
+            <div class="assignments-header">
+              <h1 class="assignments-heading">Assignments</h1>
+              <a href="#" class="help-link"><i class="bi bi-question-circle-fill"></i> Help</a>
+            </div>
+            <div style="margin-bottom:20px;">
+              <button class="btn-outline" onclick="return false;">View History</button>
+            </div>
+            <table class="assignments-table">
+              <thead>
+                <tr>
+                  <th class="col-assignment">Assignment</th>
+                  <th class="col-status">Completion Status</th>
+                  <th class="col-score">Score</th>
+                  <th class="col-eval">Evaluation Status</th>
+                </tr>
+              </thead>
+              <tbody id="assignmentsTableBody">
+                <!-- populated by JS -->
+              </tbody>
+            </table>
+            <div class="assignments-footer">
+              <select class="per-page-select">
+                <option>20 per page</option>
+                <option>50 per page</option>
+                <option>100 per page</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== VIEW: Classlist ===== -->
+        <div id="studentViewClasslist" class="hidden">
+          <div class="assignments-page">
+            <div class="assignments-header">
+              <h1 class="assignments-heading">Classlist</h1>
+            </div>
+            <table class="assignments-table classlist-table">
+              <thead>
+                <tr>
+                  <th style="width:40px;"><input type="checkbox" disabled></th>
+                  <th style="width:60px;">Image</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th style="width:90px;">Role</th>
+                </tr>
+              </thead>
+              <tbody id="studentClasslistBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== VIEW: Assignment Detail / Submission ===== -->
+        <div id="studentViewAssignmentDetail" class="hidden">
+          <div class="assignment-detail-page">
+            <div class="assignment-breadcrumb">
+              <a href="#" onclick="showStudentView('assignments'); return false;">Assignments</a>
+              <span class="breadcrumb-sep">&rsaquo;</span>
+              <span id="assignmentDetailBreadcrumb">Assignment - Submission</span>
+            </div>
+            <h1 class="assignment-detail-title" id="assignmentDetailTitle">Assignment - Submission</h1>
+
+            <div class="assignment-info-toggle">
+              <a href="#" onclick="return false;"><i class="bi bi-caret-down-fill"></i> Hide Assignment Information</a>
+            </div>
+
+            <div class="assignment-info-block">
+              <p class="assignment-due-line" id="assignmentDetailDue">Due on Mar 17, 2026 8:00 AM</p>
+              <p class="assignment-avail-line" id="assignmentDetailAvail">Available until Mar 21, 2026 8:00 AM. <strong>Access restricted after availability ends.</strong></p>
+              <div id="assignmentDetailFile" style="margin-top:8px;"></div>
+            </div>
+
+            <div class="rubrics-toggle">
+              <a href="#" onclick="return false;"><i class="bi bi-caret-right"></i> Show Rubrics</a>
+            </div>
+
+            <div class="submit-assignment-section">
+              <h2 class="submit-heading">Submit Assignment</h2>
+              <p class="submit-files-label"><a href="#">Files to submit</a> *</p>
+              <p class="submit-files-count" id="assignmentFileCount">(0) file(s) to submit</p>
+              <p class="submit-instruction">After uploading, you must click Submit to complete the submission.</p>
+              <div class="submit-buttons-row">
+                <button class="btn-action" onclick="document.getElementById('assignmentFileInput').click();">
+                  <i class="bi bi-file-earmark-plus"></i> Add a File
+                </button>
+                <input type="file" id="assignmentFileInput" accept=".pdf,.doc,.docx" style="display:none;" onchange="updateFileCount()">
+                <button class="btn-action"><i class="bi bi-mic"></i> Record Audio</button>
+                <button class="btn-action"><i class="bi bi-camera-video"></i> Record Video</button>
+              </div>
+            </div>
+
+            <div class="comments-section">
+              <label class="comments-label">Comments</label>
+              <textarea id="assignmentComments" class="comments-editor" placeholder="Add comments..."></textarea>
+            </div>
+
+            <div class="submit-footer-row">
+              <button class="btn-primary" onclick="submitAssignmentDetail()">Submit</button>
+              <button class="btn-cancel" onclick="showStudentView('assignments')">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============ TEACHER DASHBOARD ============ -->
+  <div id="teacherSection" class="hidden">
+    <nav class="top-navbar">
+      <div class="navbar-left">
+        <a href="#" class="nav-icon-link" onclick="showHomePage()" title="Home">
+          <i class="bi bi-house-door-fill"></i>
+        </a>
+        <span class="nav-dots">&#8942;</span>
+        <span class="navbar-brand">
+          <span class="brand-e">d</span> Learnestoga
+        </span>
+        <span class="nav-dots">&#8942;</span>
+        <span class="navbar-course-label" id="teacherCourseTitle">Course Dashboard</span>
+      </div>
+      <div class="navbar-right">
+        <span class="nav-icon-btn" title="Courses" onclick="toggleCourseDropdown(event)"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+        <span class="nav-dots">&#8942;</span>
+        <span class="nav-icon-btn" title="Messages"><i class="bi bi-envelope"></i></span>
+        <span class="nav-icon-btn" title="Discussions"><i class="bi bi-chat-left-text"></i></span>
+        <span class="nav-icon-btn" title="Notifications"><i class="bi bi-bell"></i></span>
+        <span class="nav-dots">&#8942;</span>
+        <div class="nav-user-area">
+          <div class="nav-avatar"></div>
+          <span class="nav-user-name" id="navUserName3"></span>
+        </div>
+        <span class="nav-icon-btn" onclick="logout()" title="Log Out"><i class="bi bi-gear"></i></span>
+      </div>
+    </nav>
+    <div class="accent-band"></div>
+    <nav class="sub-navbar">
+      <div class="sub-navbar-inner">
+        <a href="#" onclick="showTeacherView('dashboard'); return false;">Content</a>
+        <div class="ct-dropdown-wrapper">
+          <a href="#" class="ct-dropdown-toggle" onclick="toggleCourseTools(event); return false;">Course Tools <i class="bi bi-chevron-down" style="font-size:11px;"></i></a>
+          <div class="ct-dropdown-menu hidden" id="teacherCourseToolsMenu">
+            <a href="#" onclick="showTeacherView('assignments'); closeCourseTools(); return false;">Assignments</a>
+            <a href="#">Attendance</a>
+            <a href="#">Calendar</a>
+            <a href="#">Checklist</a>
+            <a href="#" onclick="showTeacherView('classlist'); closeCourseTools(); return false;">Classlist</a>
+            <a href="#">Class Progress</a>
+            <a href="#">Discussions</a>
+            <a href="#">Grades</a>
+            <a href="#">Groups</a>
+            <a href="#">Quizzes</a>
+            <a href="#">Rubrics</a>
+          </div>
+        </div>
+        <a href="#">Student Support</a>
+        <a href="#">Contact Support</a>
+      </div>
+    </nav>
+
+    <div class="course-layout">
+      <!-- Sidebar - Teal Theme (same as student) -->
+      <aside class="course-sidebar teal-sidebar">
+        <div class="sidebar-profile-area">
+          <div class="sidebar-avatar sidebar-avatar-img" id="profileAvatar3"></div>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="#" class="sidebar-link" onclick="showHomePage()">
+            <i class="bi bi-house-door sidebar-icon"></i> Home
+          </a>
+          <a href="#" class="sidebar-link active">
+            <i class="bi bi-bar-chart sidebar-icon"></i> Dashboard
+          </a>
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-calendar3 sidebar-icon"></i> Schedule
+          </a>
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-question-circle sidebar-icon"></i> Help
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="course-main">
+
+        <!-- ===== VIEW: Teacher Dashboard (default) ===== -->
+        <div id="teacherViewDashboard">
+          <!-- Course Header -->
+          <div class="course-hero">
+            <h1 class="course-title" id="teacherCourseName">Course Name</h1>
+            <p class="course-meta" id="teacherCourseMeta">Course Details</p>
+          </div>
+
+          <!-- Course Shortcut Icons -->
+          <div class="course-shortcuts-bar">
+            <div class="shortcut-item">
+              <div class="shortcut-icon"><i class="bi bi-file-earmark-text"></i></div>
+              <span>Course Outline</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon"><i class="bi bi-journal-bookmark"></i></div>
+              <span>Instructional Plan</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon"><i class="bi bi-person-lines-fill"></i></div>
+              <span>Classlist</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-icon"><i class="bi bi-people"></i></div>
+              <span>MS Teams</span>
+            </div>
+          </div>
+
+          <!-- Dashboard Two-Column -->
+          <div class="dashboard-content">
+            <div class="dashboard-left">
+              <h3 class="dash-section-title">Announcements</h3>
+              <div class="announcement-card">
+                <div class="announcement-icon-circle"><i class="bi bi-megaphone-fill"></i></div>
+                <div class="announcement-body">
+                  <h4 class="announcement-title">Welcome to the course</h4>
+                  <p class="announcement-date">Monday, January 6, 2026, 9:00 AM</p>
+                  <p class="announcement-text">Welcome to the Winter 2026 semester. Please review the course outline and instructional plan.</p>
+                </div>
+              </div>
+
+              <div class="widget-card" style="margin-top:24px;">
+                <h3 class="widget-card-heading">Create Assignment</h3>
+                <div class="widget-card-body">
+          <input type="text" id="newAssignmentTitle" placeholder="Assignment Title">
+          <input type="text" id="newAssignmentDesc" placeholder="Description (optional)">
+                  <div style="margin-top:8px;">
+                    <label style="font-size:13px;color:#555;display:block;margin-bottom:4px;">Attach File (PDF / DOC / DOCX):</label>
+                    <input type="file" id="newAssignmentFile" accept=".pdf,.doc,.docx" style="font-size:13px;">
+                  </div>
+                  <button onclick="createAssignment()" style="margin-top:10px;">Create</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-right">
+              <h3 class="dash-section-title">Manage Assignments <i class="bi bi-info-circle" style="font-weight:400;font-size:14px;color:#6e7477;"></i></h3>
+              <div id="assignmentsList">
+              </div>
+            </div>
+          </div>
+
+          <!-- Grade Submissions (full width below) -->
+          <div class="widget-card" style="margin-top:24px;">
+            <h3 class="widget-card-heading">Grade Submissions</h3>
+            <div class="widget-card-body" id="submissionsDiff">
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== VIEW: Teacher Assignments List ===== -->
+        <div id="teacherViewAssignments" class="hidden">
+          <div class="assignments-page">
+            <div class="assignments-header">
+              <h1 class="assignments-heading">Assignments</h1>
+              <a href="#" class="help-link"><i class="bi bi-question-circle-fill"></i> Help</a>
+            </div>
+            <div style="margin-bottom:20px; display:flex; gap:10px;">
+              <button class="btn-primary" onclick="showTeacherView('create');">
+                <i class="bi bi-plus-lg"></i> New Assignment
+              </button>
+              <button class="btn-outline" onclick="return false;">View History</button>
+            </div>
+            <table class="assignments-table">
+              <thead>
+                <tr>
+                  <th class="col-assignment">Assignment</th>
+                  <th class="col-status">Submissions</th>
+                  <th class="col-score">Score</th>
+                  <th class="col-eval">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="teacherAssignmentsTableBody">
+                <!-- populated by JS -->
+              </tbody>
+            </table>
+            <div class="assignments-footer">
+              <select class="per-page-select">
+                <option>20 per page</option>
+                <option>50 per page</option>
+                <option>100 per page</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== VIEW: Classlist (Teacher) ===== -->
+        <div id="teacherViewClasslist" class="hidden">
+          <div class="assignments-page">
+            <div class="assignments-header">
+              <h1 class="assignments-heading">Classlist</h1>
+            </div>
+            <table class="assignments-table classlist-table">
+              <thead>
+                <tr>
+                  <th style="width:40px;"><input type="checkbox" disabled></th>
+                  <th style="width:60px;">Image</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th style="width:90px;">Role</th>
+                </tr>
+              </thead>
+              <tbody id="teacherClasslistBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===== VIEW: Create Assignment ===== -->
+        <div id="teacherViewCreate" class="hidden">
+          <div class="assignment-detail-page">
+            <div class="assignment-breadcrumb">
+              <a href="#" onclick="showTeacherView('assignments'); return false;">Assignments</a>
+              <span class="breadcrumb-sep">&rsaquo;</span>
+              <span>New Assignment</span>
+            </div>
+            <h1 class="assignment-detail-title">New Assignment</h1>
+
+            <div style="margin-top:24px; display:flex; flex-direction:column; gap:14px; max-width:560px;">
+              <div>
+                <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Title *</label>
+                <input type="text" id="createAssignmentTitle" placeholder="Assignment title" style="width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
+              </div>
+              <div>
+                <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Description</label>
+                <textarea id="createAssignmentDesc" placeholder="Instructions or description..." rows="4" style="width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:4px; font-size:14px; resize:vertical;"></textarea>
+              </div>
+              <div>
+                <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Attach File (PDF / DOC / DOCX)</label>
+                <input type="file" id="createAssignmentFile" accept=".pdf,.doc,.docx" style="font-size:13px;">
+              </div>
+            </div>
+
+            <div class="submit-footer-row" style="margin-top:28px;">
+              <button class="btn-primary" onclick="createAssignmentFromPage()">Post Assignment</button>
+              <button class="btn-cancel" onclick="showTeacherView('assignments')">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============ COURSE DROPDOWN (global) ============ -->
+  <div id="courseDropdown" class="course-dropdown hidden">
+    <div class="cd-search-row">
+      <input type="text" placeholder="Search for a course" id="courseSearchInput" oninput="filterCourseDropdown()">
+      <i class="bi bi-search cd-search-icon"></i>
+    </div>
+    <div class="cd-advanced">
+      <a href="#">Advanced Search</a>
+    </div>
+    <div class="cd-list" id="courseDropdownList">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- ============ SUBMISSIONS MODAL (Teacher) ============ -->
+  <div id="submissionsModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;">
+    <div class="submissions-modal-inner">
+      <div class="submissions-modal-header">
+        <h3 id="submissionsModalTitle">Submissions</h3>
+        <button onclick="closeSubmissionsModal()" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="submissions-modal-body">
+        <table class="assignments-table classlist-table" style="border:1px solid #d3d9e3;">
+          <thead>
+            <tr>
+              <th style="width:50px;">Image</th>
+              <th>Student</th>
+              <th>Email</th>
+              <th>Submitted</th>
+              <th>File</th>
+              <th style="width:80px;">Grade</th>
+              <th style="width:100px;">Feedback</th>
+              <th style="width:90px;">Save</th>
+            </tr>
+          </thead>
+          <tbody id="submissionsModalBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FEEDBACK MODAL ============ -->
+  <div id="feedbackModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:8px;padding:28px 32px;max-width:440px;width:90%;box-shadow:0 6px 28px rgba(0,0,0,0.2);">
+      <h3 style="margin:0 0 16px;font-size:16px;color:#1a1a1a;" id="feedbackModalTitle">Grade &amp; Feedback</h3>
+      <p style="margin:0 0 10px;font-size:14px;"><strong>Grade:</strong> <span id="feedbackModalGrade" style="color:#2c5f7a;font-weight:700;"></span></p>
+      <p style="margin:0 0 6px;font-size:14px;"><strong>Feedback from teacher:</strong></p>
+      <p style="font-size:14px;color:#444;background:#f5f5f5;padding:10px 12px;border-radius:4px;white-space:pre-wrap;" id="feedbackModalText"></p>
+      <button onclick="closeFeedbackModal()" style="margin-top:18px;padding:8px 22px;background:#2c5f7a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px;">Close</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
