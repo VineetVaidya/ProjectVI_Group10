@@ -152,7 +152,7 @@ async function register(event) {
         });
         if (res.ok) {
             alert('Registered! Please login.');
-            toggleAuthMode();
+            window.location.href = '/';
         } else {
             const data = await res.json();
             alert(data.error || 'Registration failed');
@@ -167,10 +167,7 @@ async function logout() {
     window.location.href = '/';
 }
 
-function toggleAuthMode() {
-    loginForm.classList.toggle('hidden');
-    registerForm.classList.toggle('hidden');
-}
+
 
 // Student Functions
 async function loadStudentData() {

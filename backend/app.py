@@ -121,7 +121,11 @@ def home():
     resp.headers["Cache-Control"] = "no-store"
     return resp
 
-@app.route("/student")
+@app.route("/register")
+def register_page():
+    resp = make_response(send_from_directory(str(FRONTEND_DIR), "register.html"))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
 def student_page():
     resp = make_response(send_from_directory(str(FRONTEND_DIR), "student.html"))
     resp.headers["Cache-Control"] = "no-store"
