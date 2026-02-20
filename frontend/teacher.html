@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Student Management System</h1>
+        </header>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacherSection">
+            <div class="header-row">
+                <h2>Teacher Dashboard</h2>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+
+            <div class="card">
+                <h3>Create Assignment</h3>
+                <input type="text" id="newAssignmentTitle" placeholder="Assignment Title">
+                <input type="text" id="newAssignmentDesc" placeholder="Description (optional)">
+                <button onclick="createAssignment()">Create</button>
+            </div>
+
+            <div class="card">
+                <h3>Manage Assignments</h3>
+                <div id="assignmentsList">
+                    <!-- Javascript populates this -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Grade Submissions</h3>
+                <div id="submissionsDiff">
+                    <!-- Javascript populates this -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

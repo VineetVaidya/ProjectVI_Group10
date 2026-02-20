@@ -4,7 +4,7 @@ const API_BASE = '/api';
 // State
 let currentUser = null;
 
-// DOM Elements
+// DOM Elements (Safely get elements as they might not exist on all pages)
 const authSection = document.getElementById('authSection');
 const studentSection = document.getElementById('studentSection');
 const teacherSection = document.getElementById('teacherSection');
@@ -20,62 +20,95 @@ const assignmentsList = document.getElementById('assignmentsList');
 
 // Initial Load
 document.addEventListener('DOMContentLoaded', () => {
-    configureLoginByPath();
-    checkSession();
+    const path = window.location.pathname;
+
+    if (path === '/' || path.endsWith('index.html')) {
+        // Login Page
+        checkSessionForLogin();
+    } else if (path.includes('/student')) {
+        // Student Dashboard
+        checkSessionForStudent();
+    } else if (path.includes('/teacher')) {
+        // Teacher Dashboard
+        checkSessionForTeacher();
+    }
 });
 
-function configureLoginByPath() {
-    const path = window.location.pathname;
-    const roleSelect = document.getElementById('loginRole');
-    const loginTitle = document.querySelector('#loginForm h2');
-
-    if (path === '/student') {
-        roleSelect.value = 'student';
-        roleSelect.parentElement.classList.add('hidden-role'); // Add CSS class to hide if needed or just hide element
-        roleSelect.style.display = 'none';
-        loginTitle.textContent = 'Student Login';
-    } else if (path === '/teacher') {
-        roleSelect.value = 'teacher';
-        roleSelect.style.display = 'none';
-        loginTitle.textContent = 'Teacher Login';
+// Logic for Login Page (index.html)
+async function checkSessionForLogin() {
+    try {
+        const res = await fetch(`${API_BASE}/session`);
+        const data = await res.json();
+        if (data.logged_in) {
+            // Already logged in, redirect to correct dashboard
+            if (data.user.role === 'student') {
+                window.location.href = '/student';
+            } else {
+                window.location.href = '/teacher';
+            }
+        } else {
+            // Not logged in, stay here. Initialize login role selector.
+            configureLoginByPath(); // This function is less relevant now as paths are distinct, but we keep it for now.
+            authSection.classList.remove('hidden');
+        }
+    } catch (err) {
+        console.error('Session check failed', err);
+        authSection.classList.remove('hidden');
     }
 }
 
-async function checkSession() {
+// Logic for Student Page
+async function checkSessionForStudent() {
     try {
         const res = await fetch(`${API_BASE}/session`);
         const data = await res.json();
         if (data.logged_in) {
             currentUser = data.user;
-            showDashboard();
+            if (currentUser.role !== 'student') {
+                // Wrong role, redirect
+                window.location.href = '/teacher';
+                return;
+            }
+            // Authorized
+            loadStudentData();
         } else {
-            showAuth();
+            // Not logged in
+            window.location.href = '/';
         }
     } catch (err) {
-        console.error('Session check failed', err);
-        showAuth();
+        window.location.href = '/';
     }
 }
 
-function showAuth() {
-    authSection.classList.remove('hidden');
-    studentSection.classList.add('hidden');
-    teacherSection.classList.add('hidden');
-    currentUser = null;
-}
-
-function showDashboard() {
-    authSection.classList.add('hidden');
-    if (currentUser.role === 'student') {
-        studentSection.classList.remove('hidden');
-        teacherSection.classList.add('hidden');
-        loadStudentData();
-    } else { // teacher
-        studentSection.classList.add('hidden');
-        teacherSection.classList.remove('hidden');
-        loadTeacherData();
+// Logic for Teacher Page
+async function checkSessionForTeacher() {
+    try {
+        const res = await fetch(`${API_BASE}/session`);
+        const data = await res.json();
+        if (data.logged_in) {
+            currentUser = data.user;
+            if (currentUser.role !== 'teacher') {
+                // Wrong role, redirect
+                window.location.href = '/student';
+                return;
+            }
+            // Authorized
+            loadTeacherData();
+        } else {
+            // Not logged in
+            window.location.href = '/';
+        }
+    } catch (err) {
+        window.location.href = '/';
     }
 }
+// Removed configureLoginByPath, checkSession generic, showAuth, showDashboard as they are replaced by page-specific logic or simplified.
+
+function configureLoginByPath() {
+    // Kept for compatibility if index.html uses it, though less needed now.
+    // Could just default to 'student' and let user pick.
+}
+
 
 // Auth Functions
 async function login(event) {
@@ -92,7 +125,12 @@ async function login(event) {
         const data = await res.json();
         if (res.ok) {
             currentUser = data.user;
-            showDashboard();
+            // Redirect based on role
+            if (currentUser.role === 'student') {
+                window.location.href = '/student';
+            } else {
+                window.location.href = '/teacher';
+            }
         } else {
             alert(data.error || 'Login failed');
         }
@@ -126,7 +164,7 @@ async function register(event) {
 
 async function logout() {
     await fetch(`${API_BASE}/logout`, { method: 'POST' });
-    showAuth();
+    window.location.href = '/';
 }
 
 function toggleAuthMode() {

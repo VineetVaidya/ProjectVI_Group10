@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Student Management System</h1>
+        </header>
+
+        <!-- Student Dashboard -->
+        <div id="studentSection">
+            <div class="header-row">
+                <h2>Student Dashboard</h2>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+
+            <div class="card">
+                <h3>Submit Assignment</h3>
+                <select id="assignmentSelect">
+                    <option value="">Loading assignments...</option>
+                </select>
+                <input type="file" id="submissionFile" accept=".zip">
+                <textarea id="submissionText" placeholder="Comments (optional)"></textarea>
+                <button onclick="submitAssignment()">Submit</button>
+            </div>
+
+            <div class="card">
+                <h3>My Grades</h3>
+                <ul id="gradeList">
+                    <li>Loading...</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

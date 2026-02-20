@@ -45,59 +45,7 @@
       </div>
     </div>
 
-    <!-- Student Dashboard -->
-    <div id="studentSection" class="hidden">
-      <div class="header-row">
-        <h2>Student Dashboard</h2>
-        <button onclick="logout()" class="logout-btn">Logout</button>
-      </div>
 
-      <div class="card">
-        <h3>Submit Assignment</h3>
-        <select id="assignmentSelect">
-          <option value="">Loading assignments...</option>
-        </select>
-        <input type="file" id="submissionFile" accept=".zip">
-        <textarea id="submissionText" placeholder="Comments (optional)"></textarea>
-        <button onclick="submitAssignment()">Submit</button>
-      </div>
-
-      <div class="card">
-        <h3>My Grades</h3>
-        <ul id="gradeList">
-          <li>Loading...</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Teacher Dashboard -->
-    <div id="teacherSection" class="hidden">
-      <div class="header-row">
-        <h2>Teacher Dashboard</h2>
-        <button onclick="logout()" class="logout-btn">Logout</button>
-      </div>
-
-      <div class="card">
-        <h3>Create Assignment</h3>
-        <input type="text" id="newAssignmentTitle" placeholder="Assignment Title">
-        <input type="text" id="newAssignmentDesc" placeholder="Description (optional)">
-        <button onclick="createAssignment()">Create</button>
-      </div>
-
-      <div class="card">
-        <h3>Manage Assignments</h3>
-        <div id="assignmentsList">
-          <!-- Javascript populates this -->
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Grade Submissions</h3>
-        <div id="submissionsDiff">
-          <!-- Javascript populates this -->
-        </div>
-      </div>
-    </div>
 
   </div>
   <script src="script.js"></script>

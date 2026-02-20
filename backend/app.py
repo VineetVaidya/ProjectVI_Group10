@@ -11,15 +11,20 @@ import os
 from werkzeug.utils import secure_filename
 
 # Point static_folder to ../frontend since we moved files there
-app = Flask(__name__, static_folder="../frontend", static_url_path="")
-app.secret_key = "dev-secret-key-change-me"  # for class project only
 
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'zip'}
+# Define base paths relative to this file
+BASE_DIR = Path(__file__).resolve().parent
+FRONTEND_DIR = BASE_DIR.parent / "frontend"
+DATABASE_DIR = BASE_DIR / "database"
+UPLOAD_FOLDER = BASE_DIR / "uploads"
+
+app = Flask(__name__, static_folder=str(FRONTEND_DIR), static_url_path="")
+app.secret_key = "dev-secret-key-change-me"
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-DB_PATH = Path("database/school.db")
+DB_PATH = DATABASE_DIR / "school.db"
 DB_PATH.parent.mkdir(exist_ok=True)
 
 
@@ -109,20 +114,31 @@ def handle_perm(e: PermissionError):
 
 
 @app.route("/")
-@app.route("/student")
-@app.route("/teacher")
 def home():
-    # Force NO CACHE so you always see latest HTML/JS
-    resp = make_response(send_from_directory("../frontend", "index.html"))
-    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    resp.headers["Pragma"] = "no-cache"
-    resp.headers["Expires"] = "0"
+    # Force NO CACHE
+    resp = make_response(send_from_directory(str(FRONTEND_DIR), "index.html"))
+    # Add simple cache busting headers
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+@app.route("/student")
+def student_page():
+    resp = make_response(send_from_directory(str(FRONTEND_DIR), "student.html"))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+@app.route("/teacher")
+def teacher_page():
+    resp = make_response(send_from_directory(str(FRONTEND_DIR), "teacher.html"))
+    resp.headers["Cache-Control"] = "no-store"
     return resp
 
 # Serve other static files (js, css)
 @app.route("/<path:path>")
 def static_files(path):
-    return send_from_directory("../frontend", path)
+    resp = make_response(send_from_directory(str(FRONTEND_DIR), path))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
 
 # ---------------- Auth ----------------
 @app.post("/api/register")
