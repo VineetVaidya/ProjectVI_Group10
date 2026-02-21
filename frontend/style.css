@@ -10,11 +10,11 @@
 }
 
 body {
-    font-family: 'Lato', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-    background-color: #f6f7f8;
-    color: #202122;
-    line-height: 1.4;
-    font-size: 15px;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background-color: #eef0f4;
+    color: #141517;
+    line-height: 1.5;
+    font-size: 16px;
 }
 
 .hidden {
@@ -22,7 +22,7 @@ body {
 }
 
 a {
-    color: #006fbf;
+    color: #0060cc;
     text-decoration: none;
 }
 
@@ -89,7 +89,7 @@ a:hover {
 .auth-logo {
     width: 52px;
     height: 52px;
-    background: #085394;
+    background: #0658a8;
     color: #fff;
     font-size: 28px;
     font-weight: 700;
@@ -130,17 +130,15 @@ a:hover {
     border-radius: 6px;
     font-size: 14px;
     color: #1a2a3a;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.75);
     font-family: inherit;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 #authSection input:focus,
 #authSection select:focus {
     outline: none;
-    border-color: #085394;
+    border-color: #0658a8;
     box-shadow: 0 0 0 3px rgba(8, 83, 148, 0.15);
     background: rgba(255, 255, 255, 0.65);
 }
@@ -162,9 +160,9 @@ a:hover {
     width: 100%;
     padding: 12px;
     margin-top: 14px;
-    background-color: #085394;
+    background-color: #0658a8;
     color: #fff;
-    border: 1px solid #085394;
+    border: 1px solid #0658a8;
     border-radius: 6px;
     cursor: pointer;
     font-size: 15px;
@@ -176,7 +174,7 @@ a:hover {
 }
 
 #authSection button[type="submit"]:hover {
-    background-color: #0a6fb4;
+    background-color: #0a72c2;
     transform: translateY(-1px);
     box-shadow: 0 4px 16px rgba(8, 83, 148, 0.35);
 }
@@ -193,12 +191,12 @@ a:hover {
 }
 
 #authSection a {
-    color: #085394;
+    color: #0658a8;
     font-weight: 700;
 }
 
 #authSection a:hover {
-    color: #0a6fb4;
+    color: #0a72c2;
 }
 
 .demo-info {
@@ -283,7 +281,7 @@ a:hover {
     justify-content: center;
     width: 24px;
     height: 24px;
-    background: #085394;
+    background: #0658a8;
     color: #fff;
     border-radius: 4px;
     font-size: 14px;
@@ -354,8 +352,8 @@ a:hover {
 
 /* ==================== ACCENT BAND ==================== */
 .accent-band {
-    height: 4px;
-    background: linear-gradient(90deg, #085394, #0a8aaf);
+    height: 1px;
+    background: #1a1b1d;
 }
 
 /* ==================== SUB NAVBAR ==================== */
@@ -365,9 +363,9 @@ a:hover {
 }
 
 .sub-navbar-inner {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 8px;
 }
 
 .sub-navbar a {
@@ -381,7 +379,7 @@ a:hover {
 
 .sub-navbar a:hover {
     text-decoration: underline;
-    color: #085394;
+    color: #0658a8;
 }
 
 /* ==================== PAGE CONTENT (Home) ==================== */
@@ -435,7 +433,7 @@ a:hover {
 }
 
 .text-muted {
-    color: #6e7477;
+    color: #5a6068;
     font-size: 14px;
 }
 
@@ -455,8 +453,8 @@ a:hover {
     align-items: center;
     justify-content: center;
     font-size: 20px;
-    color: #085394;
-    border: 2px solid #085394;
+    color: #0658a8;
+    border: 2px solid #0658a8;
     cursor: pointer;
 }
 
@@ -499,7 +497,7 @@ a:hover {
 .tab {
     padding: 10px 20px;
     font-size: 14px;
-    color: #006fbf;
+    color: #0060cc;
     cursor: pointer;
     border-bottom: 3px solid transparent;
     transition: border-color 0.15s;
@@ -508,11 +506,11 @@ a:hover {
 .tab.active {
     color: #202122;
     font-weight: 700;
-    border-bottom-color: #085394;
+    border-bottom-color: #0658a8;
 }
 
 .tab:hover {
-    color: #085394;
+    color: #0658a8;
 }
 
 /* ==================== COURSE GRID ==================== */
@@ -558,7 +556,7 @@ a:hover {
 }
 
 .course-card-overlay p {
-    color: #6e7477;
+    color: #5a6068;
     font-size: 12px;
     margin-top: 2px;
 }
@@ -636,8 +634,8 @@ a:hover {
 
 .sidebar-link.active {
     background: #dfe8f0;
-    border-left-color: #085394;
-    color: #085394;
+    border-left-color: #0658a8;
+    color: #0658a8;
     font-weight: 700;
 }
 
@@ -651,15 +649,15 @@ a:hover {
 .sidebar-name {
     padding: 12px 16px;
     font-size: 13px;
-    color: #6e7477;
+    color: #5a6068;
     text-align: center;
 }
 
 /* ==================== COURSE MAIN CONTENT ==================== */
 .course-main {
     flex: 1;
-    padding: 24px 30px;
-    background: #fff;
+    padding: 28px 36px;
+    background: #f8f9fb;
     overflow-y: auto;
 }
 
@@ -689,7 +687,7 @@ a:hover {
 
 .course-meta {
     font-size: 14px;
-    color: #6e7477;
+    color: #5a6068;
 }
 
 /* ==================== COURSE SHORTCUTS BAR ==================== */
@@ -697,43 +695,47 @@ a:hover {
     display: flex;
     justify-content: center;
     gap: 48px;
-    padding: 24px 20px;
-    margin-bottom: 24px;
-    border: 1px solid #d3d9e3;
-    border-radius: 8px;
+    padding: 22px 20px;
+    margin-bottom: 28px;
+    border: 1px solid #e0e4ea;
+    border-radius: 10px;
     background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
 .shortcut-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     cursor: pointer;
-    color: #565a5c;
+    color: #3a3f47;
     font-size: 13px;
+    font-weight: 500;
     transition: color 0.15s;
 }
 
 .shortcut-item:hover {
-    color: #085394;
+    color: #0658a8;
 }
 
 .shortcut-item:hover .shortcut-icon {
-    background: #d0e4f4;
+    background: #dceaf8;
+    transform: translateY(-2px);
 }
 
 .shortcut-icon {
     width: 52px;
     height: 52px;
-    border-radius: 50%;
-    background: #e8f0f8;
-    color: #085394;
+    border-radius: 12px;
+    background: #eef2f8;
+    color: #0658a8;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 22px;
-    transition: background 0.15s;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
 }
 
 /* ==================== DASHBOARD CONTENT ==================== */
@@ -754,19 +756,21 @@ a:hover {
 /* ==================== WIDGET CARDS ==================== */
 .widget-card {
     background: #fff;
-    border: 1px solid #d3d9e3;
-    border-radius: 8px;
+    border: 1px solid #e0e4ea;
+    border-radius: 10px;
     margin-bottom: 20px;
     overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
 .widget-card-heading {
-    font-size: 16px;
-    font-weight: 700;
-    color: #202122;
+    font-size: 15px;
+    font-weight: 800;
+    color: #141517;
     padding: 14px 20px;
-    border-bottom: 1px solid #e3e3e3;
+    border-bottom: 1px solid #e8eaed;
     margin: 0;
+    letter-spacing: -0.1px;
 }
 
 .widget-card-body {
@@ -792,7 +796,7 @@ input:focus,
 select:focus,
 textarea:focus {
     outline: none;
-    border-color: #085394;
+    border-color: #0658a8;
     box-shadow: 0 0 0 2px rgba(8, 83, 148, 0.12);
 }
 
@@ -802,7 +806,7 @@ textarea {
 }
 
 button {
-    background-color: #085394;
+    background-color: #0658a8;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -814,7 +818,7 @@ button {
 }
 
 button:hover {
-    background-color: #0a6fb4;
+    background-color: #0a72c2;
 }
 
 /* ==================== WORK TO DO ITEMS ==================== */
@@ -830,13 +834,13 @@ button:hover {
 .work-item-title {
     font-weight: 700;
     font-size: 14px;
-    color: #006fbf;
+    color: #0060cc;
     margin-bottom: 4px;
 }
 
 .work-item-due {
     font-size: 12px;
-    color: #6e7477;
+    color: #5a6068;
 }
 
 /* ==================== SUBMISSION & ASSIGNMENT ITEMS ==================== */
@@ -890,15 +894,15 @@ button:hover {
     border-bottom: none;
 }
 
-/* ==================== TEAL SIDEBAR (shared student + teacher) ==================== */
+/* ==================== SIDEBAR (shared student + teacher) ==================== */
 .teal-sidebar {
-    background: #2e6b6a;
+    background: #1a2332;
     border-right: none;
 }
 
 .teal-sidebar .sidebar-profile-area {
-    background: #2e6b6a;
-    border-bottom: none;
+    background: #151c28;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
     padding: 30px 16px 20px;
 }
 
@@ -907,57 +911,70 @@ button:hover {
     background-size: cover;
     background-position: center;
     color: transparent;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
 .teal-sidebar .sidebar-nav {
-    padding: 8px 0;
+    padding: 10px 0;
 }
 
 .teal-sidebar .sidebar-link {
-    color: #fff;
+    color: rgba(255,255,255,0.75);
     border-left-color: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
 }
 
 .teal-sidebar .sidebar-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.07);
     color: #fff;
     text-decoration: none;
 }
 
 .teal-sidebar .sidebar-link.active {
-    background: rgba(255, 255, 255, 0.15);
-    border-left-color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: #4da3ff;
     color: #fff;
+    font-weight: 600;
 }
 
 .teal-sidebar .sidebar-icon {
-    color: #fff;
+    color: rgba(255,255,255,0.6);
+}
+
+.teal-sidebar .sidebar-link.active .sidebar-icon {
+    color: #4da3ff;
 }
 
 /* ==================== COURSE HERO ==================== */
 .course-hero {
-    margin-bottom: 24px;
-    padding: 8px 0;
+    margin-bottom: 28px;
+    padding: 12px 0 16px;
+    border-bottom: 1px solid #e8eaed;
 }
 
 .course-hero .course-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #202122;
-    margin-bottom: 4px;
+    font-size: 26px;
+    font-weight: 800;
+    color: #141517;
+    margin-bottom: 5px;
+    letter-spacing: -0.4px;
 }
 
 .course-hero .course-meta {
     font-size: 14px;
-    color: #6e7477;
+    color: #5a6068;
+    font-weight: 400;
 }
 
 /* ==================== DASH SECTION TITLES ==================== */
 .dash-section-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #202122;
+    font-size: 17px;
+    font-weight: 800;
+    color: #141517;
+    letter-spacing: -0.2px;
     margin-bottom: 16px;
 }
 
@@ -967,18 +984,19 @@ button:hover {
     gap: 16px;
     padding: 20px;
     background: #fff;
-    border: 1px solid #d3d9e3;
-    border-radius: 8px;
+    border: 1px solid #e0e4ea;
+    border-radius: 10px;
     margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
 .announcement-icon-circle {
     width: 42px;
     height: 42px;
     min-width: 42px;
-    border-radius: 50%;
-    background: #e8f0f8;
-    color: #6e7477;
+    border-radius: 10px;
+    background: #eef2f8;
+    color: #0658a8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -992,13 +1010,13 @@ button:hover {
 .announcement-title {
     font-size: 15px;
     font-weight: 700;
-    color: #202122;
+    color: #141517;
     margin-bottom: 4px;
 }
 
 .announcement-date {
     font-size: 13px;
-    color: #6e7477;
+    color: #5a6068;
     margin-bottom: 10px;
 }
 
@@ -1027,7 +1045,7 @@ button:hover {
     min-width: 40px;
     border-radius: 50%;
     background: #e8f0f8;
-    color: #085394;
+    color: #0658a8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1042,7 +1060,7 @@ button:hover {
 
 .work-todo-title {
     font-size: 14px;
-    color: #006fbf;
+    color: #0060cc;
     font-weight: 400;
     text-decoration: none;
 }
@@ -1053,7 +1071,7 @@ button:hover {
 
 .work-todo-due {
     font-size: 12px;
-    color: #6e7477;
+    color: #5a6068;
 }
 
 /* ==================== COURSE DROPDOWN ==================== */
@@ -1089,7 +1107,7 @@ button:hover {
 
 .cd-search-row input:focus {
     outline: none;
-    border-color: #085394;
+    border-color: #0658a8;
     box-shadow: 0 0 0 2px rgba(8, 83, 148, 0.12);
 }
 
@@ -1098,7 +1116,7 @@ button:hover {
     right: 26px;
     top: 50%;
     transform: translateY(-50%);
-    color: #6e7477;
+    color: #5a6068;
     font-size: 15px;
     pointer-events: none;
 }
@@ -1111,7 +1129,7 @@ button:hover {
 
 .cd-advanced a {
     font-size: 13px;
-    color: #006fbf;
+    color: #0060cc;
 }
 
 .cd-list {
@@ -1143,7 +1161,7 @@ button:hover {
 .cd-item.cd-pinned {
     border-left-color: #0090d1;
     background: #e8f4fc;
-    color: #006fbf;
+    color: #0060cc;
     font-weight: 400;
 }
 
@@ -1161,13 +1179,13 @@ button:hover {
 }
 
 .cd-pin {
-    color: #6e7477;
+    color: #5a6068;
     font-size: 14px;
     flex-shrink: 0;
 }
 
 .cd-item.cd-pinned .cd-pin {
-    color: #006fbf;
+    color: #0060cc;
 }
 
 /* ==================== COURSE TOOLS DROPDOWN ==================== */
@@ -1190,7 +1208,7 @@ button:hover {
 
 .ct-dropdown-toggle:hover {
     text-decoration: underline;
-    color: #085394;
+    color: #0658a8;
 }
 
 .ct-dropdown-menu {
@@ -1210,7 +1228,7 @@ button:hover {
 .ct-dropdown-menu a {
     display: block;
     padding: 10px 20px;
-    color: #006fbf;
+    color: #0060cc;
     font-size: 14px;
     text-decoration: none;
     white-space: nowrap;
@@ -1241,7 +1259,7 @@ button:hover {
 }
 
 .help-link {
-    color: #006fbf;
+    color: #0060cc;
     font-size: 14px;
     display: flex;
     align-items: center;
@@ -1351,7 +1369,7 @@ button:hover {
 }
 
 .table-link {
-    color: #006fbf;
+    color: #0060cc;
     text-decoration: none;
     font-size: 14px;
 }
@@ -1369,13 +1387,13 @@ button:hover {
 }
 
 .table-link-bold:hover {
-    color: #006fbf;
+    color: #0060cc;
     text-decoration: underline;
 }
 
 /* Blue link for unsubmitted assignments */
 .table-link-name {
-    color: #006fbf;
+    color: #0060cc;
     text-decoration: none;
     font-weight: 700;
     font-size: 14px;
@@ -1386,14 +1404,14 @@ button:hover {
 }
 
 .table-link-small {
-    color: #006fbf;
+    color: #0060cc;
     font-size: 12px;
     text-decoration: underline;
 }
 
 .assignment-due-text {
     font-size: 13px;
-    color: #6e7477;
+    color: #5a6068;
     margin-top: 3px;
 }
 
@@ -1422,7 +1440,7 @@ button:hover {
 .group-icon {
     display: inline-block;
     margin-left: 6px;
-    color: #6e7477;
+    color: #5a6068;
     font-size: 14px;
     vertical-align: middle;
 }
@@ -1477,7 +1495,7 @@ button:hover {
     background: none;
     border: none;
     font-size: 24px;
-    color: #6e7477;
+    color: #5a6068;
     cursor: pointer;
     padding: 0 4px;
     line-height: 1;
@@ -1512,7 +1530,7 @@ button:hover {
 }
 
 .grade-save-btn {
-    background: #085394;
+    background: #0658a8;
     color: #fff;
     border: none;
     padding: 5px 12px;
@@ -1523,7 +1541,7 @@ button:hover {
 }
 
 .grade-save-btn:hover {
-    background: #0a6fb4;
+    background: #0a72c2;
 }
 
 .sub-status-badge {
@@ -1552,11 +1570,11 @@ button:hover {
 .assignment-breadcrumb {
     font-size: 13px;
     margin-bottom: 8px;
-    color: #6e7477;
+    color: #5a6068;
 }
 
 .assignment-breadcrumb a {
-    color: #006fbf;
+    color: #0060cc;
     text-decoration: none;
 }
 
@@ -1566,7 +1584,7 @@ button:hover {
 
 .breadcrumb-sep {
     margin: 0 6px;
-    color: #6e7477;
+    color: #5a6068;
 }
 
 .assignment-detail-title {
@@ -1581,7 +1599,7 @@ button:hover {
 }
 
 .assignment-info-toggle a {
-    color: #006fbf;
+    color: #0060cc;
     font-size: 14px;
     text-decoration: none;
     display: inline-flex;
@@ -1599,13 +1617,13 @@ button:hover {
 }
 
 .assignment-due-line {
-    color: #006fbf;
+    color: #0060cc;
     font-size: 14px;
     margin-bottom: 4px;
 }
 
 .assignment-avail-line {
-    color: #6e7477;
+    color: #5a6068;
     font-size: 14px;
 }
 
@@ -1615,7 +1633,7 @@ button:hover {
 }
 
 .rubrics-toggle a {
-    color: #006fbf;
+    color: #0060cc;
     font-size: 14px;
     text-decoration: none;
     display: inline-flex;
@@ -1644,12 +1662,12 @@ button:hover {
 }
 
 .submit-files-label a {
-    color: #006fbf;
+    color: #0060cc;
 }
 
 .submit-files-count {
     font-size: 14px;
-    color: #6e7477;
+    color: #5a6068;
     margin-bottom: 12px;
 }
 
@@ -1668,7 +1686,7 @@ button:hover {
 
 .btn-action {
     background: #e8f0f8;
-    color: #006fbf;
+    color: #0060cc;
     border: 1px solid #b8d1e8;
     padding: 8px 16px;
     border-radius: 4px;
@@ -1683,7 +1701,7 @@ button:hover {
 
 .btn-action:hover {
     background: #d0e4f4;
-    color: #085394;
+    color: #0658a8;
 }
 
 .comments-section {
@@ -1717,7 +1735,7 @@ button:hover {
 }
 
 .btn-primary {
-    background-color: #006fbf;
+    background-color: #0060cc;
     color: #fff;
     border: none;
     padding: 10px 24px;
@@ -1729,7 +1747,7 @@ button:hover {
 }
 
 .btn-primary:hover {
-    background-color: #085394;
+    background-color: #0658a8;
 }
 
 .btn-cancel {
@@ -1746,6 +1764,254 @@ button:hover {
 
 .btn-cancel:hover {
     background: #eaeaea;
+}
+
+/* ==================== GRADE LIST ==================== */
+.grade-list-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #e8eaed;
+    list-style: none;
+}
+
+.grade-list-item:last-child {
+    border-bottom: none;
+}
+
+.grade-item-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #141517;
+    margin-bottom: 6px;
+}
+
+.grade-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.grade-score {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.grade-score.pending {
+    color: #5a6068;
+    font-weight: 400;
+}
+
+.grade-item-feedback {
+    font-size: 13px;
+    color: #5a6068;
+    margin-top: 5px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.grade-item-feedback i {
+    margin-top: 2px;
+    flex-shrink: 0;
+    color: #0658a8;
+}
+
+/* ==================== MANAGE ASSIGNMENTS (teacher dashboard) ==================== */
+.manage-assignment-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid #e8eaed;
+}
+
+.manage-assignment-item:last-child {
+    border-bottom: none;
+}
+
+.ma-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.ma-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #141517;
+    margin-bottom: 5px;
+}
+
+.ma-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #5a6068;
+    flex-wrap: wrap;
+}
+
+.ma-meta i {
+    font-size: 11px;
+}
+
+.ma-dot {
+    color: #c8cdd4;
+}
+
+.ma-desc {
+    font-size: 13px;
+    color: #5a6068;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ma-actions {
+    flex-shrink: 0;
+}
+
+/* ==================== WORK TO DO URGENT BADGE ==================== */
+.todo-urgent-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #fff0ef;
+    color: #c0392b;
+    margin-left: 4px;
+}
+
+/* ==================== CREATE ASSIGNMENT CARD ==================== */
+.ca-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 14px;
+}
+
+.ca-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #141517;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ca-required {
+    color: #c0392b;
+    margin-left: 2px;
+}
+
+.ca-hint {
+    font-weight: 400;
+    color: #5a6068;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.ca-file-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border: 1px dashed #c0cad8;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #5a6068;
+    cursor: pointer;
+    background: #f8f9fb;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    font-family: inherit;
+    width: 100%;
+}
+
+.ca-file-label:hover {
+    border-color: #0658a8;
+    color: #0658a8;
+    background: #eef4fc;
+}
+
+.ca-file-label.has-file {
+    border-color: #0658a8;
+    color: #0658a8;
+    background: #eef4fc;
+}
+
+.ca-footer {
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid #e8eaed;
+}
+
+/* ==================== SETTINGS DROPDOWN ==================== */
+.settings-menu {
+    position: fixed;
+    top: 54px;
+    right: 12px;
+    width: 220px;
+    background: #fff;
+    border: 1px solid #d3d9e3;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
+    z-index: 1000;
+    padding: 6px 0;
+}
+
+.settings-menu-header {
+    padding: 8px 16px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #5a6068;
+}
+
+.settings-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #141517;
+    text-decoration: none;
+    transition: background 0.12s;
+}
+
+.settings-menu-item:hover {
+    background: #f0f2f5;
+    text-decoration: none;
+    color: #141517;
+}
+
+.settings-menu-item i {
+    font-size: 15px;
+    color: #5a6068;
+    width: 18px;
+    text-align: center;
+}
+
+.settings-menu-divider {
+    height: 1px;
+    background: #e3e3e3;
+    margin: 6px 0;
+}
+
+.settings-menu-logout {
+    color: #c0392b;
+}
+
+.settings-menu-logout i {
+    color: #c0392b;
+}
+
+.settings-menu-logout:hover {
+    background: #fdf0ef;
+    color: #c0392b;
 }
 
 /* ==================== RESPONSIVE ==================== */

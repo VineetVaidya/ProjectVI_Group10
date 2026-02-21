@@ -367,7 +367,31 @@ async function register(event) {
     }
 }
 
+function toggleSettingsMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('settingsMenu');
+    if (!menu) return;
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    menu.style.top = rect.bottom + 6 + 'px';
+    menu.style.right = (window.innerWidth - rect.right) + 'px';
+    menu.classList.toggle('hidden');
+}
+
+function closeSettingsMenu() {
+    const menu = document.getElementById('settingsMenu');
+    if (menu) menu.classList.add('hidden');
+}
+
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('settingsMenu');
+    if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target)) {
+        closeSettingsMenu();
+    }
+});
+
 async function logout() {
+    closeSettingsMenu();
     await fetch(`${API_BASE}/logout`, { method: 'POST' });
     selectedCourse = null;
     showAuth();
@@ -486,7 +510,8 @@ async function loadAssignmentsTable() {
     if (!tbody) return;
 
     try {
-        const res = await fetch(`${API_BASE}/assignments`);
+        const code = selectedCourse ? selectedCourse.code : '';
+        const res = await fetch(`${API_BASE}/assignments?course_code=${encodeURIComponent(code)}`);
         const assignments = await res.json();
         cachedAssignments = assignments;
 
@@ -512,8 +537,13 @@ async function loadAssignmentsTable() {
         }
 
         assignments.forEach((a, i) => {
-            const dueDate = new Date(baseDate);
-            dueDate.setDate(dueDate.getDate() + (i * 14));
+            let dueDate;
+            if (a.due_date) {
+                dueDate = new Date(a.due_date + 'T08:00:00');
+            } else {
+                dueDate = new Date(baseDate);
+                dueDate.setDate(dueDate.getDate() + (i * 14));
+            }
             const endDate = new Date(dueDate);
             endDate.setDate(endDate.getDate() + 3);
 
@@ -669,7 +699,8 @@ async function loadTeacherAssignmentsTable() {
     if (!tbody) return;
 
     try {
-        const res = await fetch(`${API_BASE}/assignments`);
+        const code = selectedCourse ? selectedCourse.code : '';
+        const res = await fetch(`${API_BASE}/assignments?course_code=${encodeURIComponent(code)}`);
         const assignments = await res.json();
 
         const subRes = await fetch(`${API_BASE}/submissions`);
@@ -727,22 +758,49 @@ async function loadStudentData() {
 
 async function loadSubmissionsForStudent() {
     const gradeList = document.getElementById('gradeList');
-    const res = await fetch(`${API_BASE}/submissions`);
-    const submissions = await res.json();
+    const code = selectedCourse ? selectedCourse.code : '';
+    const [subRes, assignRes] = await Promise.all([
+        fetch(`${API_BASE}/submissions`),
+        fetch(`${API_BASE}/assignments?course_code=${encodeURIComponent(code)}`)
+    ]);
+    const submissions = await subRes.json();
+    const assignments = await assignRes.json();
+
+    // Build total map (id DESC order → index 0 = first in list)
+    const totalMap = {};
+    const courseAssignmentIds = new Set();
+    assignments.forEach((a, i) => {
+        totalMap[a.id] = 30 + i * 5;
+        courseAssignmentIds.add(a.id);
+    });
+
+    // Only show submissions for this course's assignments
+    const courseSubmissions = submissions.filter(s => courseAssignmentIds.has(s.assignment_id));
+
     gradeList.innerHTML = '';
 
-    if (submissions.length === 0) {
-        gradeList.innerHTML = '<li>No submissions yet.</li>';
+    if (courseSubmissions.length === 0) {
+        gradeList.innerHTML = '<li style="color:#5a6068;font-size:14px;padding:12px 0;">No submissions yet.</li>';
         return;
     }
 
-    submissions.forEach(s => {
+    courseSubmissions.forEach(s => {
+        const total = totalMap[s.assignment_id] || 100;
+        let gradeHTML;
+        if (s.grade) {
+            const pct = Math.round((parseFloat(s.grade) / total) * 100);
+            const colour = pct >= 70 ? '#1a7a4a' : pct >= 50 ? '#b35a00' : '#c0392b';
+            gradeHTML = `<span class="grade-score" style="color:${colour};">${s.grade} / ${total} &mdash; ${pct}%</span>`;
+        } else {
+            gradeHTML = `<span class="grade-score pending">Pending</span>`;
+        }
+
         const li = document.createElement('li');
+        li.className = 'grade-list-item';
         li.innerHTML = `
-            <strong>${s.title}</strong><br>
-            Content: ${s.content}<br>
-            Grade: ${s.grade || 'Pending'} <br>
-            Feedback: ${s.feedback || 'None'}
+            <div class="grade-item-title">${s.title}</div>
+            <div class="grade-item-meta">${gradeHTML}</div>
+            ${s.feedback ? `<div class="grade-item-feedback"><i class="bi bi-chat-left-text"></i> ${s.feedback}</div>` : ''}
         `;
         gradeList.appendChild(li);
     });
@@ -752,7 +810,8 @@ async function loadWorkToDo() {
     const workToDo = document.getElementById('workToDo');
     if (!workToDo) return;
 
-    const res = await fetch(`${API_BASE}/assignments`);
+    const code = selectedCourse ? selectedCourse.code : '';
+    const res = await fetch(`${API_BASE}/assignments?course_code=${encodeURIComponent(code)}`);
     const assignments = await res.json();
 
     if (assignments.length === 0) {
@@ -767,17 +826,28 @@ async function loadWorkToDo() {
     cachedAssignments = assignments;
     workToDo.innerHTML = '';
     assignments.forEach((a, i) => {
-        const dueDate = new Date(baseDate);
-        dueDate.setDate(dueDate.getDate() + (i * 14));
-        const dateStr = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        let dueDate;
+        if (a.due_date) {
+            dueDate = new Date(a.due_date + 'T08:00:00');
+        } else {
+            dueDate = new Date(baseDate);
+            dueDate.setDate(dueDate.getDate() + (i * 14));
+        }
+        const now = new Date();
+        const daysLeft = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+        const dateStr = dueDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        const urgent = daysLeft <= 3;
+        const urgentBadge = urgent
+            ? `<span class="todo-urgent-badge">${daysLeft <= 0 ? 'Overdue' : daysLeft === 1 ? 'Due tomorrow' : `${daysLeft} days left`}</span>`
+            : '';
 
         const div = document.createElement('div');
         div.className = 'work-todo-item';
         div.innerHTML = `
-            <div class="work-todo-icon"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="work-todo-icon" style="${urgent ? 'background:#fff0ef;color:#c0392b;' : ''}"><i class="bi bi-file-earmark-text"></i></div>
             <div class="work-todo-info">
                 <a href="#" class="work-todo-title" onclick="openAssignmentDetail(${a.id}); return false;">${a.title}</a>
-                <span class="work-todo-due">Due ${dateStr}</span>
+                <span class="work-todo-due"><i class="bi bi-calendar3" style="font-size:11px;"></i> Due ${dateStr} ${urgentBadge}</span>
             </div>
         `;
         workToDo.appendChild(div);
@@ -794,19 +864,48 @@ async function loadTeacherData() {
 
 async function loadAssignmentsForTeacher() {
     const assignmentsList = document.getElementById('assignmentsList');
-    const res = await fetch(`${API_BASE}/assignments`);
-    const assignments = await res.json();
+    const code = selectedCourse ? selectedCourse.code : '';
+    const [assignRes, subRes] = await Promise.all([
+        fetch(`${API_BASE}/assignments?course_code=${encodeURIComponent(code)}`),
+        fetch(`${API_BASE}/submissions`)
+    ]);
+    const assignments = await assignRes.json();
+    const submissions = await subRes.json();
     assignmentsList.innerHTML = '';
 
-    assignments.forEach(a => {
+    if (assignments.length === 0) {
+        assignmentsList.innerHTML = '<p style="color:#5a6068;font-size:14px;">No assignments yet.</p>';
+        return;
+    }
+
+    assignments.forEach((a, i) => {
+        const total = 30 + i * 5;
+        const subs = submissions.filter(s => s.assignment_id === a.id);
+        const graded = subs.filter(s => s.grade).length;
+        let dueStr = '';
+        if (a.due_date) {
+            const d = new Date(a.due_date + 'T08:00:00');
+            dueStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
         const div = document.createElement('div');
-        div.className = 'assignment-item';
+        div.className = 'manage-assignment-item';
         div.innerHTML = `
-            <div>
-                <strong>${a.title}</strong>: ${a.description}
+            <div class="ma-left">
+                <div class="ma-title">${a.title}</div>
+                <div class="ma-meta">
+                    ${dueStr ? `<span><i class="bi bi-calendar3"></i> Due ${dueStr}</span>` : '<span style="color:#5a6068;">No due date</span>'}
+                    <span class="ma-dot">·</span>
+                    <span><i class="bi bi-people"></i> ${subs.length} submission${subs.length !== 1 ? 's' : ''}</span>
+                    <span class="ma-dot">·</span>
+                    <span><i class="bi bi-check2-circle"></i> ${graded} graded</span>
+                    <span class="ma-dot">·</span>
+                    <span>/ ${total} pts</span>
+                </div>
+                ${a.description ? `<div class="ma-desc">${a.description}</div>` : ''}
             </div>
-            <div>
-                <button onclick="deleteAssignment(${a.id})">Delete</button>
+            <div class="ma-actions">
+                <button class="btn-small" onclick="deleteAssignment(${a.id})"><i class="bi bi-trash"></i></button>
             </div>
         `;
         assignmentsList.appendChild(div);
@@ -817,6 +916,7 @@ async function createAssignment() {
     const newAssignmentTitle = document.getElementById('newAssignmentTitle');
     const newAssignmentDesc = document.getElementById('newAssignmentDesc');
     const newAssignmentFile = document.getElementById('newAssignmentFile');
+    const newAssignmentDue = document.getElementById('newAssignmentDue');
     const title = newAssignmentTitle.value.trim();
     const description = newAssignmentDesc.value.trim();
 
@@ -825,6 +925,8 @@ async function createAssignment() {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
+    formData.append('course_code', selectedCourse ? selectedCourse.code : '');
+    formData.append('due_date', newAssignmentDue ? newAssignmentDue.value : '');
     if (newAssignmentFile && newAssignmentFile.files[0]) {
         formData.append('file', newAssignmentFile.files[0]);
     }
@@ -837,6 +939,7 @@ async function createAssignment() {
     if (res.ok) {
         newAssignmentTitle.value = '';
         newAssignmentDesc.value = '';
+        if (newAssignmentDue) newAssignmentDue.value = '';
         if (newAssignmentFile) newAssignmentFile.value = '';
         loadAssignmentsForTeacher();
     } else {
@@ -847,6 +950,7 @@ async function createAssignment() {
 async function createAssignmentFromPage() {
     const title = (document.getElementById('createAssignmentTitle').value || '').trim();
     const description = (document.getElementById('createAssignmentDesc').value || '').trim();
+    const due_date = (document.getElementById('createAssignmentDue') || {}).value || '';
     const fileInput = document.getElementById('createAssignmentFile');
 
     if (!title) return alert('Title is required.');
@@ -854,6 +958,8 @@ async function createAssignmentFromPage() {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
+    formData.append('course_code', selectedCourse ? selectedCourse.code : '');
+    formData.append('due_date', due_date);
     if (fileInput && fileInput.files[0]) {
         formData.append('file', fileInput.files[0]);
     }
@@ -894,16 +1000,21 @@ async function deleteAssignment(id) {
 async function loadSubmissionsForTeacher() {
     const submissionsDiv = document.getElementById('submissionsDiff');
 
+    const code = selectedCourse ? selectedCourse.code : '';
     const [subRes, assignRes] = await Promise.all([
         fetch(`${API_BASE}/submissions`),
-        fetch(`${API_BASE}/assignments`)
+        fetch(`${API_BASE}/assignments?course_code=${encodeURIComponent(code)}`)
     ]);
-    const submissions = await subRes.json();
+    const allSubmissions = await subRes.json();
     const assignments = await assignRes.json();
 
     // assignments come back ordered id DESC; build total map
     const totalMap = {};
     assignments.forEach((a, i) => { totalMap[a.id] = 30 + i * 5; });
+
+    // Only show submissions that belong to this course's assignments
+    const courseAssignmentIds = new Set(assignments.map(a => a.id));
+    const submissions = allSubmissions.filter(s => courseAssignmentIds.has(s.assignment_id));
 
     submissionsDiv.innerHTML = '';
 
@@ -1168,6 +1279,29 @@ document.addEventListener('click', (e) => {
 
 // ==================== CLASSLIST ====================
 
+// Convert "First Last" → "Last, First". Names already containing a comma are left as-is.
+function caFileChanged(input) {
+    const label = document.getElementById('caFileLabel');
+    if (!label) return;
+    if (input.files && input.files[0]) {
+        label.innerHTML = `<i class="bi bi-file-earmark-check"></i> ${input.files[0].name}<input type="file" id="newAssignmentFile" accept=".pdf,.doc,.docx" style="display:none;" onchange="caFileChanged(this)">`;
+        label.classList.add('has-file');
+    } else {
+        label.innerHTML = `<i class="bi bi-paperclip"></i> Choose file…<input type="file" id="newAssignmentFile" accept=".pdf,.doc,.docx" style="display:none;" onchange="caFileChanged(this)">`;
+        label.classList.remove('has-file');
+    }
+}
+
+function toLastFirst(name) {
+    if (!name) return '';
+    if (name.includes(',')) return name;
+    const parts = name.trim().split(/\s+/);
+    if (parts.length < 2) return name;
+    const last = parts[parts.length - 1];
+    const first = parts.slice(0, -1).join(' ');
+    return `${last}, ${first}`;
+}
+
 async function loadClasslist(tbodyId) {
     const tbody = document.getElementById(tbodyId);
     if (!tbody) return;
@@ -1184,6 +1318,7 @@ async function loadClasslist(tbodyId) {
         }
 
         students.forEach(s => {
+            const displayName = toLastFirst(s.name);
             const initials = s.name.split(/[\s,]+/).filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2);
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -1191,7 +1326,7 @@ async function loadClasslist(tbodyId) {
                 <td style="text-align:center;">
                     <div class="classlist-avatar">${initials}</div>
                 </td>
-                <td><a href="#" class="table-link-bold" onclick="return false;">${s.name}</a></td>
+                <td><a href="#" class="table-link-bold" onclick="return false;">${displayName}</a></td>
                 <td>${s.email}</td>
                 <td style="text-transform:capitalize;">${s.role}</td>
             `;

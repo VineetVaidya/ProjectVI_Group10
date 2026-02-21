@@ -88,10 +88,12 @@ def init_db() -> None:
     )
     conn.commit()
 
-    # Migrate: add file_name columns if they don't exist yet
+    # Migrate: add columns if they don't exist yet
     for stmt in (
         "ALTER TABLE assignments ADD COLUMN file_name TEXT",
         "ALTER TABLE submissions ADD COLUMN file_name TEXT",
+        "ALTER TABLE assignments ADD COLUMN course_code TEXT",
+        "ALTER TABLE assignments ADD COLUMN due_date TEXT",
     ):
         try:
             conn.execute(stmt)
@@ -244,10 +246,17 @@ def get_session():
 # ---------------- Assignments ----------------
 @app.get("/api/assignments")
 def list_assignments():
+    course_code = request.args.get('course_code', '').strip()
     conn = db()
-    rows = conn.execute(
-        "SELECT id,title,description,created_at,file_name FROM assignments ORDER BY id DESC"
-    ).fetchall()
+    if course_code:
+        rows = conn.execute(
+            "SELECT id,title,description,created_at,file_name,due_date FROM assignments WHERE course_code=? ORDER BY id DESC",
+            (course_code,)
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT id,title,description,created_at,file_name,due_date FROM assignments ORDER BY id DESC"
+        ).fetchall()
     return jsonify([dict(r) for r in rows])
 
 
@@ -262,28 +271,25 @@ def create_assignment():
     if "multipart" in ct or "form" in ct:
         title = (request.form.get("title") or "").strip()
         description = (request.form.get("description") or "").strip()
+        course_code = (request.form.get("course_code") or "").strip()
+        due_date = (request.form.get("due_date") or "").strip()
         file_name = save_upload(request.files.get("file"))
     else:
         data: dict[str, Any] = request.get_json(force=True) or {}
         title = (data.get("title") or "").strip()
         description = (data.get("description") or "").strip()
+        course_code = (data.get("course_code") or "").strip()
+        due_date = (data.get("due_date") or "").strip()
         file_name = None
 
     if not title:
         return jsonify({"error": "title required"}), 400
 
     conn = db()
-    try:
-        conn.execute(
-            "INSERT INTO assignments(title,description,created_at,file_name) VALUES(?,?,?,?)",
-            (title, description, now_iso(), file_name),
-        )
-    except sqlite3.OperationalError:
-        # file_name column not yet migrated — insert without it
-        conn.execute(
-            "INSERT INTO assignments(title,description,created_at) VALUES(?,?,?)",
-            (title, description, now_iso()),
-        )
+    conn.execute(
+        "INSERT INTO assignments(title,description,created_at,file_name,course_code,due_date) VALUES(?,?,?,?,?,?)",
+        (title, description, now_iso(), file_name, course_code or None, due_date or None),
+    )
     conn.commit()
     return jsonify({"status": "created"}), 201
 
