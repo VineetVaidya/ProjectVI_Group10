@@ -163,6 +163,29 @@ def init_db() -> None:
             )
     conn.commit()
 
+    # Seed a permanent assignment + submissions for JMeter to run against
+    seed_assignment = conn.execute(
+        "SELECT id FROM assignments WHERE title = 'JMeter Seed Assignment'"
+    ).fetchone()
+    if seed_assignment is None:
+        cur = conn.execute(
+            "INSERT INTO assignments(title,description,created_at,course_code) VALUES(?,?,?,?)",
+            ("JMeter Seed Assignment", "Permanent seed for load testing", now_iso(), "MATH10100"),
+        )
+        seed_assignment_id = cur.lastrowid
+        conn.commit()
+
+        # Seed a submission from every student so JMeter threads spread across rows
+        students = conn.execute(
+            "SELECT id FROM users WHERE role = 'student'"
+        ).fetchall()
+        for student in students:
+            conn.execute(
+                "INSERT INTO submissions(assignment_id,student_id,content,submitted_at) VALUES(?,?,?,?)",
+                (seed_assignment_id, student["id"], "JMeter seed submission", now_iso()),
+            )
+        conn.commit()
+
 
 def require_login() -> tuple[int, str]:
     user_id = session.get("user_id")
@@ -306,12 +329,12 @@ def create_assignment():
         return jsonify({"error": "title required"}), 400
 
     conn = db()
-    conn.execute(
+    cur = conn.execute(
         "INSERT INTO assignments(title,description,created_at,file_name,course_code,due_date) VALUES(?,?,?,?,?,?)",
         (title, description, now_iso(), file_name, course_code or None, due_date or None),
     )
     conn.commit()
-    return jsonify({"status": "created"}), 201
+    return jsonify({"status": "created", "id": cur.lastrowid}), 201
 
 @app.put("/api/assignments/<int:id>")
 def update_assignment(id: int):
