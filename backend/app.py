@@ -288,6 +288,18 @@ def get_session():
     )
 
 
+@app.route("/api/assignments", methods=["OPTIONS"])
+@app.route("/api/assignments/<int:id>", methods=["OPTIONS"])
+def assignments_options(id: int | None = None):
+    if id is None:
+        allowed = "GET, POST, OPTIONS"
+    else:
+        allowed = "GET, PUT, DELETE, OPTIONS"
+    response = jsonify({"allowed_methods": allowed.split(", ")})
+    response.headers["Allow"] = allowed
+    return response, 200
+
+
 # ---------------- Assignments ----------------
 @app.get("/api/assignments")
 def list_assignments():
