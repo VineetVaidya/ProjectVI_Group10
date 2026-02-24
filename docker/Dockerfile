@@ -14,4 +14,4 @@ COPY frontend/ ./frontend/
 EXPOSE 5000
 
 # Run the app with Gunicorn
-CMD ["sh", "-c", "cd backend && gunicorn app:app --bind 0.0.0.0:5000"]
+CMD ["sh", "-c", "cd backend && gunicorn app:app --bind 0.0.0.0:5000 --workers 2 --threads 4"]

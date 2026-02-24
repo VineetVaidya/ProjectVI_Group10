@@ -49,7 +49,8 @@ def db() -> sqlite3.Connection:
     if "db_conn" not in g:
         conn = sqlite3.connect(DB_PATH, timeout=10)
         conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA busy_timeout=5000")
+        conn.execute("PRAGMA synchronous=NORMAL")
+        conn.execute("PRAGMA busy_timeout=10000")
         conn.execute("PRAGMA foreign_keys=ON")
         conn.row_factory = sqlite3.Row
         g.db_conn = conn
@@ -67,7 +68,8 @@ def close_db(exception):
 def init_db() -> None:
     conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA busy_timeout=5000")
+    conn.execute("PRAGMA synchronous=NORMAL")
+    conn.execute("PRAGMA busy_timeout=10000")
     conn.execute("PRAGMA foreign_keys = ON")
     conn.row_factory = sqlite3.Row
     
@@ -418,6 +420,10 @@ def list_submissions():
     conn = db()
 
     if role == "student":
+        page = request.args.get("page", 1, type=int)
+        per_page = request.args.get("per_page", 50, type=int)
+        per_page = min(per_page, 100)
+        offset = (page - 1) * per_page
         rows = conn.execute(
             """
             SELECT s.id, s.assignment_id, a.title,
@@ -427,8 +433,9 @@ def list_submissions():
             JOIN assignments a ON a.id = s.assignment_id
             WHERE s.student_id = ?
             ORDER BY s.id DESC
+            LIMIT ? OFFSET ?
             """,
-            (user_id,),
+            (user_id, per_page, offset),
         ).fetchall()
         return jsonify([dict(r) for r in rows])
 
