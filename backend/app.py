@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from flask import Flask, jsonify, make_response, request, send_from_directory, session
+from flask import Flask, g, jsonify, make_response, request, send_from_directory, session
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
@@ -45,15 +45,31 @@ def now_iso() -> str:
 
 
 def db() -> sqlite3.Connection:
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+    """Get a per-request database connection with performance pragmas."""
+    if "db_conn" not in g:
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=5000")
+        conn.execute("PRAGMA foreign_keys=ON")
+        conn.row_factory = sqlite3.Row
+        g.db_conn = conn
+    return g.db_conn
+
+
+@app.teardown_appcontext
+def close_db(exception):
+    """Close the database connection at the end of each request."""
+    conn = g.pop("db_conn", None)
+    if conn is not None:
+        conn.close()
 
 
 def init_db() -> None:
-    conn = db()
-    # Enable foreign keys
+    conn = sqlite3.connect(DB_PATH, timeout=10)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=5000")
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.row_factory = sqlite3.Row
     
     conn.executescript(
         """
@@ -86,6 +102,10 @@ def init_db() -> None:
         );
         """
     )
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_submissions_student ON submissions(student_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_submissions_assignment ON submissions(assignment_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_users_email_role ON users(email, role)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_assignments_course ON assignments(course_code)")
     conn.commit()
 
     # Migrate: add columns if they don't exist yet
@@ -390,6 +410,11 @@ def list_submissions():
         return jsonify([dict(r) for r in rows])
 
     # teacher
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 50, type=int)
+    per_page = min(per_page, 100)
+    offset = (page - 1) * per_page
+
     rows = conn.execute(
         """
         SELECT s.id, s.assignment_id, a.title,
@@ -400,7 +425,9 @@ def list_submissions():
         JOIN assignments a ON a.id = s.assignment_id
         JOIN users u ON u.id = s.student_id
         ORDER BY s.id DESC
-        """
+        LIMIT ? OFFSET ?
+        """,
+        (per_page, offset),
     ).fetchall()
     return jsonify([dict(r) for r in rows])
 
